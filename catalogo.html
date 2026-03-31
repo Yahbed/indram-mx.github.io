@@ -206,5 +206,46 @@ document.addEventListener('keydown',e=>{
 switchCat(CATS[0].id);
 
 </script>
+
+<style>
+  /* Block text selection and drag on images */
+  img { -webkit-user-drag: none; user-drag: none; -webkit-user-select: none; user-select: none; pointer-events: none; }
+  .card { position: relative; }
+  /* Transparent overlay on each card to intercept clicks properly */
+  .card-shield { position: absolute; inset: 0; z-index: 2; cursor: pointer; }
+</style>
+<script>
+  // Block right-click on the whole page
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    return false;
+  });
+  // Block drag start
+  document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+    return false;
+  });
+  // Block keyboard shortcuts for Save (Ctrl+S / Cmd+S)
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S' || e.key === 'u' || e.key === 'U')) {
+      e.preventDefault();
+      return false;
+    }
+  });
+  // Overwrite _blank opens to prevent direct image URL access via inspector tricks
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add shield div over each card so pointer-events work for click but not drag
+    document.querySelectorAll('.card').forEach(function(card) {
+      var shield = document.createElement('div');
+      shield.className = 'card-shield';
+      var idx = card.dataset.idx;
+      shield.addEventListener('click', function() {
+        // Trigger lightbox via the card's original click
+        card.click();
+      });
+      card.appendChild(shield);
+    });
+  });
+</script>
 </body>
 </html>
