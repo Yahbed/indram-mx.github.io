@@ -882,49 +882,94 @@ const TIERS = [
 ];
 
 const CATALOG = [
-  { cat: 'Vasos Doble Fondo Glitter', emoji: '✨', items: [
-    'Rosa Claro','Naranja','Verde Agua','Morado','Rojo','Oro',
-    'Azul Brillante','Holográfico Rosa','Lila','Azul Rey',
-    'Azul Claro','Fucsia','Verde','Plata','Multicolor'
-  ], prices: [55, null, null, null] },
+  { cat: 'Botanero 500 ML', emoji: '🫙', items: [
+    'Rosa','Negro','Rojo','Verde','Azul','Transparente'
+  ], prices: [17, 16, 15.5, 14] },
 
-  { cat: 'Vaso Doble Fondo Transparente', emoji: '🫙', items: ['Transparente'],
-    prices: [45, 44, 42, 40] },
+  { cat: 'Botanero 800 ML', emoji: '🫙', items: [
+    'Rosa','Rojo','Negro','Verde','Azul','Transparente'
+  ], prices: [18, 17, 16.5, 15] },
 
-  { cat: 'Vasos Doble Fondo Color Claro', emoji: '🎨', items: [
-    'Verde','Rojo','Azul Claro','Azul Rey','Rosa Fucsia','Naranja'
-  ], prices: [50, null, null, null] },
-
-  { cat: 'Vasos Tequileros', emoji: '🥃', items: [
-    'Transparente','Rojo Transparente','Naranja Transparente',
-    'Azul Transparente','Morado Transparente','Transparente con Glitter',
-    'Fucsia Transparente','Jade Transparente','Humo Transparente',
-    'Amarillo Neón','Verde Neón'
-  ], prices: [10, 9, 8.5, 7] },
-
-  { cat: 'Cheleros', emoji: '🍺', items: ['Amarillo','Rojo'],
-    prices: [11, 10.5, 10, 9] },
-
-  { cat: 'Vasos 400ml Cafetero', emoji: '☕', items: [
-    'Rojo','Blanco','Negro','Morado','Transparente'
+  { cat: 'Vaso 16 oz Cafetero', emoji: '☕', items: [
+    'Amarillo Neon','Verde Neon','Dorado','Verde Bandera','Lila',
+    'Amarillo','Fiusha','Rosa Gold','Morado','Blanco','Plata',
+    'Verde Perla','Rosa Pastel','Naranja','Rojo','Tiffany',
+    'Azul Rey','Negro','Azul Pastel'
   ], prices: [12, 11.5, 11, 10] },
 
-  { cat: 'Vasos 400ml con Popote', emoji: '🧃', items: [
-    'Rojo','Naranja','Tiffany','Fucsia','Morado',
-    'Verde Bandera','Plata','Blanco','Transparente','Negro'
+  { cat: 'Vaso 400 ML con Popote', emoji: '🥤', items: [
+    'Azul Pastel','Plata','Rojo Navidad','Transparente','Verde Bandera',
+    'Azul Rey','Rosa Pastel','Fiusha','Verde Navidad','Naranja',
+    'Tiffany','Fiusha Con Glitter','Verde Perla','Verde Neon',
+    'Amarillo Neon','Amarillo','Dorado','Morado','Lila','Blanco','Negro'
   ], prices: [13, 12.5, 12, 11] },
 
-  { cat: 'Vasos 700ml con Popote', emoji: '🥤', items: [
-    'Negro','Blanco','Amarillo','Amarillo Neón','Rosa Pastel',
-    'Tiffany','Verde Bandera','Verde Neón','Plateado','Azul Nivea',
-    'Verde Perla','Azul Perla','Morado','Azul Pastel',
-    'Rojo Navidad','Verde Navidad'
+  { cat: 'Vaso 400 ML Glitter Multicolor', emoji: '✨', items: [
+    'Azul Pastel','Transparente','Verde','Lila','Dorado',
+    'Verde Navidad','Plata','Tiffany','Morado','Azul Rey',
+    'Rosa Pastel','Verde Neon','Negro','Blanco','Rojo',
+    'Naranja','Amarillo','Fiusha','Verde Perla','Amarillo Neon'
+  ], prices: [13, 12.5, 12, 11] },
+
+  { cat: 'Vaso 24 oz Cafetero', emoji: '☕', items: [
+    'Azul Rey','Azul Pastel','Blanco','Fiusha','Rosa Pastel',
+    'Negro','Morado','Verde Neon','Amarillo','Verde Glitter',
+    'Verde Navidad','Transparente','Rojo','Verde Bandera',
+    'Amarillo Neon','Plata','Naranja','Lila','Tiffany'
+  ], prices: [14, 13.5, 13, 12] },
+
+  { cat: 'Vaso 24 oz con Popote', emoji: '🥤', items: [
+    'Azul Rey','Verde Neon','Fiusha','Blanco','Amarillo','Plata',
+    'Naranja','Rojo','Amarillo Neon','Dorado','Cobre','Morado',
+    'Transparente','Verde Bandera','Rosa Pastel','Negro',
+    'Azul Pastel','Lila','Tiffany'
   ], prices: [15, 14.5, 14, 13] },
 
-  { cat: 'Vasos 700ml Glitter con Popote', emoji: '💫', items: [
-    'Transparente','Fucsia','Azul','Verde'
-  ], prices: [17.5, 17, 16.5, 16] }
+  { cat: 'Vaso 24 oz Cafetero Glitter', emoji: '☕', items: [
+    'Azul','Transparente'
+  ], prices: [16.5, 15, 14.5, 14] },
+
+  { cat: 'Vaso 24 oz Popote Glitter', emoji: '🥤', items: [
+    'Fiusha','Verde','Verde Neon','Rojo','Azul','Jade',
+    'Amarillo Neon','Morado'
+  ], prices: [17.5, 17, 16.5, 16] },
+
+  { cat: 'Vaso 24 oz Glitter Multicolor', emoji: '✨', items: [
+    'Rojo','Verde','Transparente','Amarillo','Dorado',
+    'Negro','Plata','Verde Perla','Azul Rey','Azul'
+  ], prices: [17.5, 17, 16.5, 16] },
+
+  { cat: 'Vaso Kidz', emoji: '🧒', items: [
+    'Azul Rey','Rosa Pastel','Lila','Tiffany','Amarillo Neon',
+    'Morado','Fiusha','Naranja','Azul Pastel','Verde Neon','Verde Bandera'
+  ], prices: [14, 13, 12, 11] },
+
+  { cat: 'Tequilero 2 oz', emoji: '🥃', items: [
+    'Glitter','Negro','Rojo','Verde Neon','Transparente',
+    'Azul','Amarillo','Fiusha','Morado','Naranja','Jade'
+  ], prices: [10, 9, 8.5, 7] },
+
+  { cat: 'Vaso Mágico Cafetero 16 oz', emoji: '🪄', items: [
+    'Verde Perla','Rojo','Azul'
+  ], prices: [15, 14.5, 14, 12] },
+
+  { cat: 'Vaso Mágico Cafetero', emoji: '🪄', items: [
+    'Fiusha','Verde Perla'
+  ], prices: [19, 18.5, 17, 16] },
+
+  { cat: 'Vaso Mágico Popote 16 oz', emoji: '🪄', items: [
+    'Azul','Rojo'
+  ], prices: [16, 15.5, 15, 13] },
+
+  { cat: 'Vaso Mágico con Popote', emoji: '🪄', items: [
+    'Fiusha','Verde Perla'
+  ], prices: [20, 19.5, 19, 18] },
+
+  { cat: 'Termo Doble Pared', emoji: '🪣', items: [
+    'Transparente'
+  ], prices: [40, 38, 37, 35] },
 ];
+
 
 // ──────────────────────────────────────────────────────────────────────
 // ESTADO
