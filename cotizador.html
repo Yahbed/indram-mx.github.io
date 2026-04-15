@@ -270,7 +270,7 @@
 
     .invoice-cols {
       display: grid;
-      grid-template-columns: 2fr 100px 90px 90px 90px 36px;
+      grid-template-columns: 2fr 150px 90px 90px 90px 36px;
       padding: 0.5rem 1.25rem;
       gap: 0.5rem;
       border-bottom: 1px solid var(--border);
@@ -278,7 +278,7 @@
     .invoice-cols span { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gray); }
     .invoice-cols span:not(:first-child) { text-align: right; }
     @media (max-width: 640px) {
-      .invoice-cols { grid-template-columns: 1fr 72px 72px 36px; }
+      .invoice-cols { grid-template-columns: 1fr 130px 72px 36px; }
       .col-base, .col-tier { display: none; }
     }
 
@@ -300,12 +300,12 @@
 
     .li-main {
       display: grid;
-      grid-template-columns: 2fr 100px 90px 90px 90px 36px;
+      grid-template-columns: 2fr 150px 90px 90px 90px 36px;
       gap: 0.5rem;
       align-items: center;
     }
     @media (max-width: 640px) {
-      .li-main { grid-template-columns: 1fr 72px 72px 36px; }
+      .li-main { grid-template-columns: 1fr 130px 72px 36px; }
       .li-base, .li-tier-col { display: none; }
     }
 
@@ -368,13 +368,13 @@
     }
 
     /* Qty inline editor */
-    .li-qty-wrap { display: flex; align-items: center; gap: 0.4rem; justify-content: flex-end; }
+    .li-qty-wrap { display: flex; align-items: center; gap: 0.3rem; justify-content: flex-end; }
     .li-qty-btn {
       background: var(--light);
       border: none;
-      border-radius: 8px;
-      width: 36px; height: 36px;
-      font-size: 1.2rem;
+      border-radius: 7px;
+      width: 28px; height: 28px;
+      font-size: 1rem;
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       color: var(--navy);
@@ -384,20 +384,20 @@
     }
     .li-qty-btn:hover { background: var(--orange-bg); color: var(--orange); }
     .li-qty-input {
-      width: 70px;
-      border: 2px solid var(--border);
-      border-radius: 8px;
+      width: 72px;
+      height: 28px;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
       text-align: center;
-      font-size: 1.05rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      padding: 0.4rem 0.25rem;
       color: #1a1a2e;
-      -webkit-text-fill-color: #1a1a2e;
       background: #ffffff;
-      line-height: 1.4;
+      box-sizing: border-box;
     }
     .li-qty-input::-webkit-outer-spin-button,
-    .li-qty-input::-webkit-inner-spin-button { display: none; }
+    .li-qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .li-qty-input[type=number] { -moz-appearance: textfield; }
     .li-qty-input:focus { outline: none; border-color: var(--orange); }
 
     .li-del {
