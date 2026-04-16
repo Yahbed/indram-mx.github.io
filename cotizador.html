@@ -1161,8 +1161,6 @@ const PHOTOS = {
   'Termo Doble Pared|Transparente': 'fotos/01-08-03_DIEGO_RAMIREZ_PRODUCTO_INDRAM_5/01-08-03 DIEGO RAMIREZ PRODUCTO INDRAM 5-37.jpg',
 };
 
-
-
 // ──────────────────────────────────────────────────────────────────────
 // ESTADO
 // ──────────────────────────────────────────────────────────────────────
@@ -1372,7 +1370,7 @@ function renderInvoice() {
       <div class="line-item">
         <div class="li-main">
           <div class="li-product-info">
-            <div class="li-thumb">${(()=>{const p=PHOTOS[`${cat.cat}|${item}`]||PHOTOS[`${cat.cat}|__default`];return p?`<img src="${p}" alt="${item}" loading="lazy">`:cat.emoji;})()}</div>
+            <div class="li-thumb">${(PHOTOS[`${cat.cat}|${item}`] || PHOTOS[`${cat.cat}|__default`]) ? `<img src="${PHOTOS[`${cat.cat}|${item}`] || PHOTOS[`${cat.cat}|__default`]}" alt="${item}" loading="lazy">` : cat.emoji}</div>
             <div>
               <div class="li-name">${item}</div>
               <div class="li-cat">${cat.cat}</div>
@@ -1532,10 +1530,37 @@ function quoteNumber() {
 // ──────────────────────────────────────────────────────────────────────
 // GENERATE PDF (jsPDF + autoTable)
 // ──────────────────────────────────────────────────────────────────────
-function generatePDF(cust) {
+function urlToBase64(url) {
+  return fetch(url)
+    .then(function(res) { return res.ok ? res.blob() : null; })
+    .then(function(blob) {
+      if (!blob) return null;
+      return new Promise(function(resolve) {
+        var reader = new FileReader();
+        reader.onloadend = function() { resolve(reader.result); };
+        reader.onerror  = function() { resolve(null); };
+        reader.readAsDataURL(blob);
+      });
+    })
+    .catch(function() { return null; });
+}
+
+async function generatePDF(cust) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const { rows, grand, base, saving, pzas } = buildSummary();
+
+  // Pre-fetch product images as base64 for PDF
+  const _imgCache = {};
+  await Promise.all(rows.map(async (r) => {
+    const _key = `${r.cat}|${r.item}`;
+    const _path = (typeof PHOTOS !== 'undefined')
+      ? (PHOTOS[_key] || PHOTOS[`${r.cat}|__default`]) : null;
+    if (_path) {
+      const _b64 = await urlToBase64(new URL(_path, location.href).href);
+      if (_b64) _imgCache[_key] = _b64;
+    }
+  }));
   const now     = new Date();
   const dateStr = now.toLocaleDateString('es-MX', { year:'numeric', month:'long', day:'numeric' });
   const qNum    = quoteNumber();
@@ -1600,14 +1625,15 @@ function generatePDF(cust) {
   doc.autoTable({
     startY: y,
     margin: { left: ml, right: mr },
-    head: [['Producto', 'Categoría', 'Cant.', 'Precio base', 'Tu precio / Tier', 'Desc.', 'Subtotal']],
+    head: [['', 'Producto', 'Categoría', 'Cant.', 'Precio base', 'Tu precio / Tier', 'Desc.', 'Subtotal']],
     body: rows.map(r => [
+      '',
       r.item,
       r.cat,
       r.qty.toLocaleString('es-MX'),
-      r.pct > 0 ? '$' + r.bp.toFixed(2) : '—',
+      r.pct > 0 ? '$' + r.bp.toFixed(2) : '-',
       '$' + r.price.toFixed(2) + '\n' + r.tierLabel,
-      r.pct > 0 ? '−' + r.pct + '%' : '—',
+      r.pct > 0 ? '-' + r.pct + '%' : '-',
       '$' + r.sub.toFixed(2)
     ]),
     headStyles: {
@@ -1617,16 +1643,30 @@ function generatePDF(cust) {
       fontStyle: 'bold',
       halign: 'center',
     },
-    bodyStyles: { fontSize: 7.5, cellPadding: 3 },
+    bodyStyles: { fontSize: 7.5, cellPadding: 3, minCellHeight: 14 },
     columnStyles: {
-      0: { fontStyle: 'bold', cellWidth: 30 },
-      2: { halign: 'center' },
-      3: { halign: 'right', textColor: [150, 150, 160] },
-      4: { halign: 'right', fontStyle: 'bold' },
-      5: { halign: 'center', textColor: [22, 163, 74] },
-      6: { halign: 'right', fontStyle: 'bold' },
+      0: { cellWidth: 14, halign: 'center', valign: 'middle' },
+      1: { fontStyle: 'bold', cellWidth: 28 },
+      3: { halign: 'center' },
+      4: { halign: 'right', textColor: [150, 150, 160] },
+      5: { halign: 'right', fontStyle: 'bold' },
+      6: { halign: 'center', textColor: [22, 163, 74] },
+      7: { halign: 'right', fontStyle: 'bold' },
     },
     alternateRowStyles: { fillColor: [253, 248, 245] },
+    didDrawCell: (data) => {
+      if (data.section === 'body' && data.column.index === 0) {
+        const _r = rows[data.row.index];
+        const _k = `${_r.cat}|${_r.item}`;
+        const _b64 = _imgCache[_k];
+        if (_b64) {
+          const _sz = 10;
+          const _x = data.cell.x + (data.cell.width - _sz) / 2;
+          const _y = data.cell.y + (data.cell.height - _sz) / 2;
+          try { doc.addImage(_b64, 'JPEG', _x, _y, _sz, _sz); } catch(e) {}
+        }
+      }
+    },
   });
 
   y = doc.lastAutoTable.finalY + 6;
@@ -1660,7 +1700,7 @@ function generatePDF(cust) {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8.5);
     doc.setTextColor(74, 222, 128);
-    doc.text('💚 Total que ahorras:', ml + 5, y + 27);
+    doc.text('Total que ahorras:', ml + 5, y + 27);
     doc.text('$' + saving.toFixed(2) + ' MXN', W - mr - 5, y + 27, { align: 'right' });
   }
 
@@ -1851,7 +1891,7 @@ async function submitQuote(e) {
 
   try {
     /* 1. Generate & save PDF */
-    const doc = generatePDF(cust);
+    const doc = await generatePDF(cust);
     lastDoc = doc;
     doc.save('cotizacion-indram.pdf');
 
