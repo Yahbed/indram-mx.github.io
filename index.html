@@ -936,9 +936,9 @@
     <a href="https://www.facebook.com/profile.php?id=100064163019075" target="_blank" style="color:var(--grey);text-decoration:none;font-size:0.75rem;font-family:'Space Mono',monospace;transition:color 0.2s;letter-spacing:1px;" onmouseover="this.style.color='#1877f2'" onmouseout="this.style.color='var(--grey)'">FB</a>
     <a href="https://www.instagram.com/indram999" target="_blank" style="color:var(--grey);text-decoration:none;font-size:0.75rem;font-family:'Space Mono',monospace;transition:color 0.2s;letter-spacing:1px;" onmouseover="this.style.color='#e1306c'" onmouseout="this.style.color='var(--grey)'">IG</a>
     <div style="width:1px;height:18px;background:rgba(255,255,255,0.1);"></div>
-    <a href="/catalogo.html" class="btn-outline" style="padding:0.6rem 1.4rem;font-size:0.82rem;">📦 Catálogo</a>
-    <a href="/cotizador.html" class="btn-primary" style="padding:0.6rem 1.4rem;font-size:0.82rem;">🧮 Cotiza aquí →</a>
-    <a href="#contacto-mayorista" class="btn-primary" style="padding:0.6rem 1.4rem;font-size:0.82rem;" onclick="showPanel('mayorista')">Mayorista</a>
+    <a id="tour-btn-catalogo" href="/catalogo.html" class="btn-outline" style="padding:0.6rem 1.4rem;font-size:0.82rem;">📦 Catálogo</a>
+    <a id="tour-btn-cotiza" href="/cotizador.html" class="btn-primary" style="padding:0.6rem 1.4rem;font-size:0.82rem;">🧮 Cotiza aquí →</a>
+    <a id="tour-btn-mayorista" href="#contacto-mayorista" class="btn-primary" style="padding:0.6rem 1.4rem;font-size:0.82rem;" onclick="showPanel('mayorista')">Mayorista</a>
   </div>
 </nav>
 
@@ -1596,6 +1596,121 @@
   }, { threshold: 0.1 });
 
   reveals.forEach(el => observer.observe(el));
+</script>
+
+<!-- ONBOARDING TOUR -->
+<style>
+#tour-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);z-index:9000;pointer-events:none;transition:background 0.4s ease}
+#tour-overlay.active{background:rgba(0,0,0,0.60);pointer-events:all}
+.tour-lit{position:relative;z-index:9100!important;outline:3px solid rgba(255,255,255,0.95)!important;outline-offset:4px!important;border-radius:9px!important;box-shadow:0 0 0 7px rgba(255,255,255,0.15),0 0 30px rgba(255,255,255,0.20)!important;transition:all 0.3s ease!important}
+#tour-bubble{position:fixed;z-index:9200;background:#fff;border-radius:14px;padding:18px 20px;width:240px;box-shadow:0 12px 40px rgba(0,0,0,0.28);display:none;pointer-events:all}
+#tour-bubble::after{content:'';position:absolute;top:-14px;width:0;height:0;border:7px solid transparent;border-bottom-color:#fff}
+.tour-icon{font-size:20px;margin-bottom:6px}
+.tour-title{font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:5px}
+.tour-desc{font-size:12px;color:#555;line-height:1.55;margin-bottom:14px}
+.tour-footer{display:flex;justify-content:space-between;align-items:center}
+.tour-dots{display:flex;gap:5px}
+.tour-dot{width:6px;height:6px;border-radius:50%;background:#ddd;transition:background 0.25s}
+.tour-dot.on{background:#e85d00}
+.tour-skip{font-size:11px;color:#aaa;background:none;border:none;cursor:pointer;padding:0}
+.tour-next{font-size:12px;font-weight:700;background:#e85d00;color:#fff;border:none;border-radius:7px;padding:7px 16px;cursor:pointer;transition:opacity 0.2s}
+.tour-next:hover{opacity:0.88}
+</style>
+<div id="tour-overlay"></div>
+<div id="tour-bubble">
+  <div class="tour-icon" id="tb-icon"></div>
+  <div class="tour-title" id="tb-title"></div>
+  <div class="tour-desc" id="tb-desc"></div>
+  <div class="tour-footer">
+    <div class="tour-dots" id="tb-dots"></div>
+    <div>
+      <button class="tour-skip" id="tb-skip" onclick="tourEnd()">Saltar</button>
+      &nbsp;
+      <button class="tour-next" id="tb-next"></button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  if(sessionStorage.getItem('indram_tour_done')) return;
+  var steps=[
+    {id:'tour-btn-catalogo', icon:'📖', title:'Catálogo completo',
+     desc:'Explora todos nuestros productos: vasos, termos, botaneros y más. Todos los diseños y colores disponibles.'},
+    {id:'tour-btn-cotiza', icon:'🧮', title:'Cotiza tu pedido',
+     desc:'¿Quieres precio especial por volumen? Cotiza aquí con descuentos automáticos según la cantidad que pidas.'},
+    {id:'tour-btn-mayorista', icon:'🏪', title:'Zona Mayorista',
+     desc:'¿Eres distribuidor o tienda? Conoce nuestras condiciones especiales para compradores de mayoreo.'}
+  ];
+  var cur=0;
+  var ov=document.getElementById('tour-overlay');
+  var bub=document.getElementById('tour-bubble');
+
+  function showStep(i){
+    steps.forEach(function(s){
+      var el=document.getElementById(s.id);
+      if(el) el.classList.remove('tour-lit');
+    });
+    var s=steps[i];
+    var el=document.getElementById(s.id);
+    if(!el){tourEnd();return;}
+    el.classList.add('tour-lit');
+
+    document.getElementById('tb-icon').textContent=s.icon;
+    document.getElementById('tb-title').textContent=s.title;
+    document.getElementById('tb-desc').textContent=s.desc;
+
+    var dotsEl=document.getElementById('tb-dots');
+    dotsEl.innerHTML='';
+    steps.forEach(function(_,j){
+      var d=document.createElement('span');
+      d.className='tour-dot'+(j===i?' on':'');
+      dotsEl.appendChild(d);
+    });
+
+    var isLast=(i===steps.length-1);
+    var skipBtn=document.getElementById('tb-skip');
+    var nextBtn=document.getElementById('tb-next');
+    skipBtn.style.display=isLast?'none':'inline';
+    nextBtn.textContent=isLast?'Entendido':'Siguiente';
+    nextBtn.onclick=isLast?tourEnd:function(){showStep(i+1);};
+
+    bub.style.display='block';
+    var rect=el.getBoundingClientRect();
+    var bw=240;
+    var left=rect.left+(rect.width/2)-(bw/2);
+    left=Math.max(8,Math.min(left,window.innerWidth-bw-8));
+    bub.style.left=left+'px';
+    bub.style.top=(rect.bottom+14)+'px';
+    var arrowLeft=(rect.left+rect.width/2)-left-7;
+    bub.style.setProperty('--al',(Math.max(14,Math.min(arrowLeft,bw-28)))+'px');
+    bub.querySelector('::after');
+    bub.style.cssText+=';--al:'+(Math.max(14,Math.min(arrowLeft,bw-28)))+'px';
+    var afterStyle=bub.id+'::after';
+    document.head.insertAdjacentHTML('beforeend','<style>#tour-bubble::after{left:var(--al)}</style>');
+    cur=i;
+  }
+
+  window.tourEnd=function(){
+    sessionStorage.setItem('indram_tour_done','1');
+    ov.classList.remove('active');
+    bub.style.display='none';
+    steps.forEach(function(s){
+      var el=document.getElementById(s.id);
+      if(el) el.classList.remove('tour-lit');
+    });
+  };
+
+  function startTour(){
+    ov.classList.add('active');
+    showStep(0);
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){setTimeout(startTour,800);});
+  } else {
+    setTimeout(startTour,800);
+  }
+})();
 </script>
 </body>
 </html>
